@@ -18,5 +18,5 @@ def metrics():
     result = "# TYPE hello_world_counter counter\nhello_world_counter %d\n" % counter
     return Response(result, mimetype='text/plain')
 
-app.run()
+app.run(host= '0.0.0.0')
 

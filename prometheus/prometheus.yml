@@ -8,8 +8,8 @@ global:
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
-    - targets: ['localhost:9090']
+    - targets: ['flask:5000']
   - job_name: 'flask_app' 
     static_configs: 
-    - targets: ['localhost:5000']
+    - targets: ['localhost:9090']
     

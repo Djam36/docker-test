@@ -4,19 +4,29 @@ volumes:
     prometheus_data: {}
     grafana_data: {}
 
+networks:
+  front:
+   driver: bridge
+  back:
+   driver: bridge
 services: 
-  flask_app: 
-    container_name: flask_app
-    expose: 
-      - 5000
+  flask: 
+    container_name: flask
     image: "djam36/app_flask:latest"
+    expose:
+      - 5000
     ports: 
-      - "5000:5000"
+      - 5000:5000
     restart: unless-stopped
+    networks: 
+      - front
+      - back
   grafana: 
     container_name: grafana
     depends_on: 
       - prometheus
+    ports: 
+      - 3000:3000
     environment: 
       - GF_SECURITY_ADMIN_PASSWORD=ADMIN
       - GF_USERS_ALLOW_SIGN_UP=false
@@ -27,17 +37,20 @@ services:
     user: "472"
     volumes: 
       - "grafana_data:/var/lib/grafana"
+    networks: 
+      - back
+      - front
   prometheus: 
     command: 
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
     container_name: prometheus
-    expose: 
-      - 9095
     image: "prom/prometheus:v2.1.0"
     ports: 
-      - "9095:9095"
+      - 9090:9090
     restart: unless-stopped
     volumes: 
       - ./prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
+    networks: 
+      - back
